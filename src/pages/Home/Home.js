@@ -1,38 +1,50 @@
-import React from 'react';
-import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-import Routing from './RoutingMachine';
+import React, { useEffect, useState } from 'react';
+import Grid from '@material-ui/core/Grid';
 
+import InputSection from '../../components/InputSection/InputSection';
+import MapSection from '../../components/MapSection/MapSection';
 import './home.scss';
 
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
+import getFuelPricesAPI from '../../api/fuel/getFuelPrices';
 
 const Home = () => {
-  const center = [33.80783809837398, 35.77950633050182];
+  const [lastClick, setLastClick] = useState();
+  const [prices, setPrices] = useState({});
+  const [coordinates, setCoordinates] = useState([]);
+
+  useEffect(() => {
+    getPricesData();
+  }, []);
+
+  const getPricesData = async () => {
+    try {
+      const pricesData = await getFuelPricesAPI();
+      setPrices(pricesData.data.prices);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onMapClickHandler = (newCoords) => {
+    setLastClick(newCoords);
+    // console.log(newCoords);
+  };
+
+  const onCalculateClickHandler = (newCoordinates) => {
+    // console.log(coordinates);
+    setCoordinates([...newCoordinates]);
+  };
 
   return (
-    <MapContainer
-      center={center}
-      zoom={8.5}
-      style={{ width: '75vw', height: '70vh' }}
-    >
-      <TileLayer
-        url={
-          'https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key=ekFD57sGwSTMIBBJ7Oj9'
-        }
-        attribution={
-          '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
-        }
-      />
-      <Routing />
-    </MapContainer>
+    <div className='home-container'>
+      <Grid container spacing={2} direction='row' justifyContent='flex-start'>
+        <InputSection
+          coords={lastClick}
+          onCalculateClick={onCalculateClickHandler}
+        />
+        <MapSection onMapClick={onMapClickHandler} coordinates={coordinates} />
+      </Grid>
+    </div>
   );
 };
 

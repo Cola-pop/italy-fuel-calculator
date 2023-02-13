@@ -13,7 +13,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/home' element={<Home />} />
-            <Route path='/calculate-fuel' element={<Home />} />
+            <Route path='/fuel-calculator' element={<Home />} />
           </Routes>
         </Layout>
       </Router>

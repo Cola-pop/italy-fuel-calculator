@@ -6,8 +6,8 @@ import './NavigationBar.scss';
 const NavigationBar = (props) => {
   const navLinksData = [
     {
-      label: 'Calculate Fuel',
-      href: '/calculate-fuel',
+      label: 'Fuel Calculator',
+      href: '/fuel-calculator',
     },
   ];
 
